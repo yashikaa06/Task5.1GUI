@@ -1,0 +1,34 @@
+
+import RPi.GPIO as GPIO
+import tkinter as tk
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+LED_PINS={'blue':17,'green':27 ,'white':22 }
+for pin in LED_PINS.values():
+	GPIO.setup(pin, GPIO.OUT)
+	GPIO.setup(pin, GPIO.LOW)
+
+def turn_on_led(color):
+	for pin in LED_PINS.values():
+		GPIO.output(pin, GPIO.LOW)
+		GPIO.output(LED_PINS[color], GPIO.HIGH)
+
+def close():
+	GPIO.cleanup()
+	window.quit()
+	window=tk.Tk()
+	window.title("LED CONTROL")
+root=tk.Tk()
+
+selected_led=tk.StringVar(value='blue')
+window= tk.Tk()
+tk.Radiobutton(window, text="Blue LED", variable=selected_led, value='blue',
+command=lambda: turn_on_led('blue')).pack(anchor=tk.W)
+tk.Radiobutton(window, text="White LED", variable=selected_led, value='white',
+command=lambda: turn_on_led('white')).pack(anchor=tk.W)
+tk.Radiobutton(window, text="Green LED", variable=selected_led, value='green',
+command=lambda: turn_on_led('green')).pack(anchor=tk.W)
+
+tk.Button(window, text="Exit", command=close).pack()
+window.mainloop()
