@@ -1,34 +1,49 @@
-
+# Import necessary libraries
 import RPi.GPIO as GPIO
 import tkinter as tk
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-LED_PINS={'blue':17,'green':27 ,'white':22 }
+# Initialize GPIO settings
+GPIO.setwarnings(False)  # Ignore GPIO warnings
+GPIO.setmode(GPIO.BCM)   # Use BCM numbering for GPIO
+
+# Define GPIO pins for each LED color
+LED_PINS = {'blue': 17, 'green': 27, 'white': 22}
+
+# Set up each LED pin as an output and turn it off initially
 for pin in LED_PINS.values():
-	GPIO.setup(pin, GPIO.OUT)
-	GPIO.setup(pin, GPIO.LOW)
+    GPIO.setup(pin, GPIO.OUT)   # Set pin as output
+    GPIO.output(pin, GPIO.LOW)  # Turn off LED initially
 
+# Function to turn on the selected LED and turn off others
 def turn_on_led(color):
-	for pin in LED_PINS.values():
-		GPIO.output(pin, GPIO.LOW)
-		GPIO.output(LED_PINS[color], GPIO.HIGH)
+    # Turn off all LEDs before turning on the selected one
+    for pin in LED_PINS.values():
+        GPIO.output(pin, GPIO.LOW)  # Set each pin to LOW to turn off LEDs
+    # Turn on the LED for the selected color
+    GPIO.output(LED_PINS[color], GPIO.HIGH)  # Set the selected LED pin to HIGH
 
+# Function to clean up GPIO settings and close the Tkinter window
 def close():
-	GPIO.cleanup()
-	window.quit()
-	window=tk.Tk()
-	window.title("LED CONTROL")
-root=tk.Tk()
+    GPIO.cleanup()  # Reset all GPIO pins
+    window.quit()   # Close the Tkinter window
 
-selected_led=tk.StringVar(value='blue')
-window= tk.Tk()
+# Create a Tkinter window for LED control
+window = tk.Tk()
+window.title("LED Control")
+
+# Create a StringVar to track the selected LED, with 'blue' as the default value
+selected_led = tk.StringVar(value='blue')
+
+# Create radio buttons for each LED color and link to turn_on_led function
 tk.Radiobutton(window, text="Blue LED", variable=selected_led, value='blue',
-command=lambda: turn_on_led('blue')).pack(anchor=tk.W)
+               command=lambda: turn_on_led('blue')).pack(anchor=tk.W)
 tk.Radiobutton(window, text="White LED", variable=selected_led, value='white',
-command=lambda: turn_on_led('white')).pack(anchor=tk.W)
+               command=lambda: turn_on_led('white')).pack(anchor=tk.W)
 tk.Radiobutton(window, text="Green LED", variable=selected_led, value='green',
-command=lambda: turn_on_led('green')).pack(anchor=tk.W)
+               command=lambda: turn_on_led('green')).pack(anchor=tk.W)
 
+# Create an Exit button to close the program
 tk.Button(window, text="Exit", command=close).pack()
+
+# Start the Tkinter event loop to display the window and handle interactions
 window.mainloop()
